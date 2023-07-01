@@ -13,14 +13,14 @@ public interface StatRepository extends JpaRepository<Stat, Long> {
             "FROM Stat s " +
             "WHERE s.timestamp BETWEEN :start AND :end " +
             "GROUP BY s.app, s.uri " +
-            "ORDER BY COUNT(s.ip) DESC " )
+            "ORDER BY COUNT(s.ip) DESC ")
     List<ViewStatsDto> getStatCountForAllIp(LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT new ru.practicum.statdto.ViewStatsDto(s.app, s.uri, COUNT(DISTINCT s.ip)) " +
             "FROM Stat s " +
             "WHERE s.timestamp BETWEEN :start AND :end " +
             "GROUP BY s.app, s.uri " +
-            "ORDER BY COUNT(s.ip) DESC " )
+            "ORDER BY COUNT(s.ip) DESC ")
     List<ViewStatsDto> getStatCountForUniqueIp(LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT new ru.practicum.statdto.ViewStatsDto(s.app, s.uri, COUNT(s.ip)) " +
@@ -28,7 +28,7 @@ public interface StatRepository extends JpaRepository<Stat, Long> {
             "WHERE s.timestamp BETWEEN :start AND :end " +
             "AND s.uri IN :uris " +
             "GROUP BY s.app, s.uri " +
-            "ORDER BY COUNT(s.ip) DESC " )
+            "ORDER BY COUNT(s.ip) DESC ")
     List<ViewStatsDto> getStatCountForAllIpByUris(LocalDateTime start, LocalDateTime end, List<String> uris);
 
     @Query("SELECT new ru.practicum.statdto.ViewStatsDto(s.app, s.uri, COUNT(DISTINCT s.ip)) " +
@@ -36,7 +36,7 @@ public interface StatRepository extends JpaRepository<Stat, Long> {
             "WHERE s.timestamp BETWEEN :start AND :end " +
             "AND s.uri IN :uris " +
             "GROUP BY s.app, s.uri " +
-            "ORDER BY COUNT(s.ip) DESC " )
+            "ORDER BY COUNT(s.ip) DESC ")
     List<ViewStatsDto> getStatCountForUniqueIpByUris(LocalDateTime start, LocalDateTime end, List<String> uris);
 
 }
