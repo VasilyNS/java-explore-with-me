@@ -54,7 +54,7 @@ public class BaseClient {
                     Object o = parameters.get(key);
                     if (o instanceof List) {
                         // Требуется явное преобразование объекта в тип список объектов
-                        List <Object> l = (List<Object>) o;
+                        List<Object> l = (List<Object>) o;
                         for (Object elem : l) {
                             builder.queryParam(key, elem);
                         }

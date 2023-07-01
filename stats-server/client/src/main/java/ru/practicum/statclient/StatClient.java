@@ -19,9 +19,11 @@ public class StatClient extends BaseClient {
     public StatClient(@Value("${web-server.url}") String serverUrl) {
         super(serverUrl);
     }
+
     public void saveStat(StatDto statDto) {
         post("/hit", statDto);
     }
+
     public List<ViewStatsDto> getStat(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -42,7 +44,8 @@ public class StatClient extends BaseClient {
         ObjectMapper objectMapper = new ObjectMapper();
         List<ViewStatsDto> viewStatsDtos = objectMapper.convertValue(
                 response.getBody(),
-                new TypeReference<List<ViewStatsDto>>() {}
+                new TypeReference<List<ViewStatsDto>>() {
+                }
         );
 
         return viewStatsDtos;
