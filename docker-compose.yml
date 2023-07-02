@@ -11,7 +11,7 @@ services:
         condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/statsdb
-      - TZ=Asia/Krasnoyarsk # Закомментить таймзону перед отправкой на гитхаб
+#      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
 
   stats-db:
     image: postgres:14-alpine
@@ -24,7 +24,7 @@ services:
       - POSTGRES_DB=statsdb
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - TZ=Asia/Krasnoyarsk # Закомментить таймзону перед отправкой на гитхаб
+#      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U root -d statsdb'"]
       interval: 5s
@@ -42,7 +42,7 @@ services:
 #        condition: service_healthy
 #    environment:
 #      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmdb
-#      - TZ=Asia/Krasnoyarsk # Закомментить таймзону перед отправкой на гитхаб
+#      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
 
 #  ewm-db:
 #    image: postgres:14-alpine
@@ -55,7 +55,7 @@ services:
 #      - POSTGRES_DB=ewmdb
 #      - POSTGRES_USER=root
 #      - POSTGRES_PASSWORD=root
-#      - TZ=Asia/Krasnoyarsk # Закомментить таймзону перед отправкой на гитхаб
+#      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
 #    healthcheck:
 #      test: ["CMD-SHELL", "sh -c 'pg_isready -U root -d ewmdb'"]
 #      interval: 5s

@@ -50,8 +50,9 @@ public class BaseClient {
                 // Получение URI из эндпоинта и Map из параметров,
                 // причем элементом мапы могут быть массивы
                 UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(path);
-                for (String key : parameters.keySet()) {
-                    Object o = parameters.get(key);
+                for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                    String key = entry.getKey();
+                    Object o = entry.getValue();
                     if (o instanceof List) {
                         // Требуется явное преобразование объекта в тип список объектов
                         List<Object> l = (List<Object>) o;
