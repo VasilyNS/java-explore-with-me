@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.statdto.StatDto;
@@ -26,16 +27,13 @@ public class StatClient extends BaseClient {
      */
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public StatClient(@Value("${web-server.url}") String serverUrl) {
+    public StatClient(@Value("${statserver.url}") String serverUrl) {
         super(serverUrl);
     }
 
     public void saveStat(StatDto statDto) {
-        try {
-            post("/hit", statDto);
-        } catch (Exception e) {
-            log.warn("Error in accessing the server at POST /hit: {}", e.getMessage());
-        }
+        // Ошибки обработает ErrorHandler
+        post("/hit", statDto);
     }
 
     public List<ViewStatsDto> getStat(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
@@ -44,20 +42,15 @@ public class StatClient extends BaseClient {
         // Упаковываем все параметры в мапу
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("start", start.format(formatter));
-        parameters.put("end", end.format(formatter));
+        parameters.put("end", "qqq" /*end.format(formatter)*/);
         parameters.put("unique", unique);
-        if (uris != null) {
+        if (uris != null && uris.size() != 0) {
             parameters.put("uris", uris);
         }
 
-        // Отправляем запрос и получаем ответ
+        // Отправляем запрос и получаем ответ, ошибки обработает ErrorHandler
         ResponseEntity<Object> response;
-        try {
-            response = get("/stats", parameters);
-        } catch (Exception e) {
-            log.warn("Error in accessing the server at GET /stats: {}", e.getMessage());
-            return null;
-        }
+        response = get("/stats", parameters);
 
         // Проверка, что ответ имеет код успеха 2xx
         if (response.getStatusCode().is2xxSuccessful()) {
