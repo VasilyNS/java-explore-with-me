@@ -34,7 +34,7 @@ public class PrivateController {
     @ResponseStatus(HttpStatus.CREATED) // 201
     public EventFullDto saveEvent(@Valid @RequestBody NewEventDto newEventDto,
                                   @PathVariable Long userId) {
-        log.info("Begin of 'POST /users/userId/events' Event creation, userId={} for: {}",
+        log.info("Begin of 'POST /users/{userId}/events' Event creation, userId={} for: {}",
                 userId, newEventDto.toString());
         return eventService.saveEvent(newEventDto, userId);
     }
@@ -53,7 +53,6 @@ public class PrivateController {
      * В случае, если события с заданным id не найдено, возвращает статус код 404
      */
     @GetMapping("/{userId}/events/{eventId}")
-    @ResponseStatus(HttpStatus.CREATED) // 201
     public EventFullDto getEventByIdForCurrentUser(@PathVariable Long userId,
                                                    @PathVariable Long eventId) {
         log.info("Begin of 'GET /users/{userId}/events/{eventId}' Event by userId={} and eventId={}",
@@ -61,5 +60,19 @@ public class PrivateController {
         return eventService.getEventByIdForCurrentUser(userId, eventId);
     }
 
+    /**
+     * Изменение события добавленного текущим пользователем,
+     * изменить можно только отмененные события или события в состоянии ожидания модерации (Ожидается код ошибки 409)
+     * дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
+     * (Ожидается код ошибки 409)
+     */
+    @PatchMapping("/{userId}/events/{eventId}")
+    public EventFullDto updateEvent(@Valid @RequestBody UpdateEventUserRequest updateEventUserRequest,
+                                    @PathVariable Long userId,
+                                    @PathVariable Long eventId) {
+        log.info("Begin of user's 'PATCH /users/{userId}/events/{eventId}' Event by userId={} and eventId={}, new event={}",
+                userId, eventId, updateEventUserRequest);
+        return eventService.updateEventByUser(updateEventUserRequest, userId, eventId);
+    }
 
 }

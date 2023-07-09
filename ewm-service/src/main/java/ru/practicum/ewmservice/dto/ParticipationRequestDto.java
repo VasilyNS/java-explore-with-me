@@ -2,6 +2,7 @@ package ru.practicum.ewmservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import ru.practicum.ewmservice.tools.Const;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ParticipationRequestDto {
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Const.DT_PATTERN)
   private LocalDateTime created;    // Дата и время создания заявки
 
   private Long event;               // Идентификатор события

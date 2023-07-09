@@ -45,9 +45,9 @@ public class TESTController {
 
         String s = statDto.toString() + "<br> \n";
 
-        statDto = new StatDto("qq-main-service", request.getRequestURI(),
-                request.getRemoteAddr(), LocalDateTime.now());
-        statClient.saveStat(statDto);
+//        statDto = new StatDto("qq-main-service", request.getRequestURI(),
+//                request.getRemoteAddr(), LocalDateTime.now());
+//        statClient.saveStat(statDto);
 
         s = s + statDto.toString() + "<br> \n<br> \n";
 

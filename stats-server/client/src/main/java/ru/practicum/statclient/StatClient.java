@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.statdto.StatDto;
@@ -42,7 +41,7 @@ public class StatClient extends BaseClient {
         // Упаковываем все параметры в мапу
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("start", start.format(formatter));
-        parameters.put("end", "qqq" /*end.format(formatter)*/);
+        parameters.put("end", end.format(formatter));
         parameters.put("unique", unique);
         if (uris != null && uris.size() != 0) {
             parameters.put("uris", uris);

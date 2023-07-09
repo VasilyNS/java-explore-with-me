@@ -37,7 +37,7 @@ public class CategoryService {
     /**
      * Метод обновления простой только из-за того, что сущность имеет всего 2 поля
      * id и name. При update сущностей с большим количеством полей нужна проверка на null
-     * каждого из полей.
+     * каждого из полей dto-класса (см. EventMapper.toEventFromUpdateEventUserRequest).
      */
     @Transactional
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
@@ -49,9 +49,6 @@ public class CategoryService {
         return CategoryMapper.toCategoryDto(categoryForReturn);
     }
 
-    /**
-     * В случае, если по заданным фильтрам не найдено ни одной категории, возвращает пустой список
-     */
     @Transactional(readOnly = true)
     public List<CategoryDto> getAllCategories(Long from, Long size) {
         int pageNum = (int) (from / size);
@@ -59,9 +56,6 @@ public class CategoryService {
         return categoryRepository.getAllCategories(pageable);
     }
 
-    /**
-     * В случае, если категории с заданным id не найдено, возвращает статус код 404
-     */
     @Transactional(readOnly = true)
     public CategoryDto getCategoryById(Long id) {
         Category category = checkExistAndGetCategory(id);
@@ -69,8 +63,7 @@ public class CategoryService {
     }
 
     /**
-     * Проверка, что объект существует,
-     * если нет - исключение, если да - возврат его самого
+     * Проверка, что сущность есть в БД, если нет - исключение, если да - возврат объекта с ней
      */
     public Category checkExistAndGetCategory(Long id) {
         return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category " + id));

@@ -5,7 +5,7 @@ package ru.practicum.ewmservice.enums;
  */
 public enum StateAction {
 
-    SEND_TO_REVIEW, CANCEL_REVIEW,  // Доступно для User
+    SEND_TO_REVIEW, CANCEL_REVIEW,  // Доступно для User, названия говорят сами за себя
 
     PUBLISH_EVENT, REJECT_EVENT     // Доступно для Admin
 

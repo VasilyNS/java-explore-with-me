@@ -1,12 +1,10 @@
 package ru.practicum.ewmservice.tools;
 
-//TODO: Удалить это класс, или придумать применение!
 
 public class Const {
 
-    /**
-     * Ограничения для пагиниации для защиты от ДОС и флуда!
-     */
-    public static final Long MAX_PAGE_SIZE = 300L;
+    public static final String DT_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    public static final String SERVICE_NAME_FOR_STAT = "ewm-main-service";
+
 
 }

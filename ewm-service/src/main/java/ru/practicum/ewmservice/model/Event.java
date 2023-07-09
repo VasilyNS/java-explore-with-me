@@ -1,14 +1,9 @@
 package ru.practicum.ewmservice.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import ru.practicum.ewmservice.dto.CategoryDto;
-import ru.practicum.ewmservice.dto.Location;
-import ru.practicum.ewmservice.dto.UserShortDto;
 import ru.practicum.ewmservice.enums.State;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
@@ -72,6 +67,7 @@ public class Event {
     private Boolean requestModeration;
 
     @Column(name = "state")
+    @Enumerated(EnumType.STRING)
     private State state;            // Список состояний жизненного цикла события Enum: PENDING, PUBLISHED, CANCELED
 
     @Column(name = "title")

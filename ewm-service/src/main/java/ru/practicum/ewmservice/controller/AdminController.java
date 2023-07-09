@@ -24,8 +24,9 @@ public class AdminController {
 
     private final UserService userService;
     private final CategoryService categoryService;
+    private final EventService eventService;
 
-    // API для работы с пользователями --------------------------------------------------------
+    // Admin: Пользователи. API для работы с пользователями --------------------------------------------------------
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED) // 201
@@ -54,7 +55,7 @@ public class AdminController {
         userService.deleteUser(id);
     }
 
-    // API для работы с категориями --------------------------------------------------------
+    // Admin: Категории. API для работы с категориями --------------------------------------------------------
 
     /**
      * Добавление новой категории, имя категории должно быть уникальным
@@ -75,12 +76,39 @@ public class AdminController {
 
     @PatchMapping("/categories/{id}")
     public CategoryDto updateCategory(@PathVariable Long id,
-                               @Valid @RequestBody CategoryDto categoryDto) {
+                                      @Valid @RequestBody CategoryDto categoryDto) {
         log.info("Begin of 'PATCH /admin/categories' Category updating, id={}, {}", id, categoryDto);
         return categoryService.updateCategory(id, categoryDto);
     }
 
-    // API для работы с ... --------------------------------------------------------
+    // Admin: События. API для работы с событиями --------------------------------------------------------
+
+    /**
+     * GET /admin/events     Поиск событий
+     */
+
+    // !!!!!!!!!!!!!!!!!!!!!!!!
+
+    /**
+     * Редактирование данных события и его статуса (отклонение/публикация).
+     * <p>
+     * При редактировании данных любого события администратором валидация данных не требуется.
+     * <p>
+     * Дата начала изменяемого события должна быть не ранее чем за час от даты публикации. (Ожидается код ошибки 409)
+     * Событие можно публиковать, только если оно в состоянии ожидания публикации (Ожидается код ошибки 409)
+     * Событие можно отклонить, только если оно еще не опубликовано (Ожидается код ошибки 409)
+     */
+    @PatchMapping("/events/{eventId}")
+    public EventFullDto updateEventByAdmin(@Valid @RequestBody UpdateEventAdminRequest updateEventAdminRequest,
+                                           @PathVariable Long eventId) {
+        log.info("Begin of admin's 'PATCH /admin/events/{eventId}' Event eventId={}, new event={}",
+                eventId, updateEventAdminRequest);
+        return eventService.updateEventByAdmin(updateEventAdminRequest, eventId);
+    }
+
+    //  --------------------------------------------------------
+
+    // Admin: Подборки событий. API для работы с подборками событий --------------------------------------------------------
 
 
 }

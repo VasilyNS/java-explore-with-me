@@ -3,6 +3,7 @@ package ru.practicum.ewmservice.tools.exception;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.http.HttpStatus;
+import ru.practicum.ewmservice.tools.Const;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +19,7 @@ public class ApiError {
     private String message;     // Сообщение об ошибке
 
     // Дата и время когда произошла ошибка (в формате "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Const.DT_PATTERN)
     private LocalDateTime timestamp = LocalDateTime.now();
 
     public ApiError(HttpStatus status, String reason, String message) {

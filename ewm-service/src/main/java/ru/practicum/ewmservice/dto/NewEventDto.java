@@ -3,6 +3,7 @@ package ru.practicum.ewmservice.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.ewmservice.enums.StateAction;
+import ru.practicum.ewmservice.tools.Const;
 import ru.practicum.ewmservice.tools.annotation.FutureWithinTwoHours;
 
 import javax.validation.constraints.*;
@@ -16,36 +17,36 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class NewEventDto {
 
-  @Size(min=20,max=2000)
-  private String annotation;          // Краткое описание события
+    @Size(min = 20, max = 2000)
+    private String annotation;          // Краткое описание события
 
-  @NotNull
-  private Long category;              // id категории к которой относится событие
+    @NotNull
+    private Long category;              // id категории к которой относится событие
 
-  @Size(min=20,max=7000)
-  private String description;         // Полное описание события
+    @Size(min = 20, max = 7000)
+    private String description;         // Полное описание события
 
-  @FutureWithinTwoHours
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime eventDate;    // Дата и время планируемого события
+    @FutureWithinTwoHours
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Const.DT_PATTERN)
+    private LocalDateTime eventDate;    // Дата и время планируемого события
 
-  private Location location;          // Широта и долгота места проведения события
+    private Location location;          // Широта и долгота места проведения события
 
-  private Boolean paid;               // Нужно ли оплачивать участие в событии
-                                      // default: false
+    private Boolean paid;               // Нужно ли оплачивать участие в событии
+    // default: false
 
-  private Integer participantLimit;   // Ограничение на количество участников.
-                                      // default: 0 - означает отсутствие ограничения
+    private Integer participantLimit;   // Ограничение на количество участников.
+    // default: 0 - означает отсутствие ограничения
 
-  private Boolean requestModeration;  // Нужна ли пре-модерация заявок на участие.
-                                      // Если true, то все заявки будут ожидать
-                                      // подтверждения инициатором события.
-                                      // Если false - то будут подтверждаться автоматически.
+    private Boolean requestModeration;  // Нужна ли пре-модерация заявок на участие.
+    // Если true, то все заявки будут ожидать
+    // подтверждения инициатором события.
+    // Если false - то будут подтверждаться автоматически.
 
-  private StateAction stateAction;    // Состояние события
+    private StateAction stateAction;    // Состояние события. TODO: ОНО ИСПОЛЬЗУЕТСЯ ДЛЯ НОВЫХ????????????????????????????
 
-  @Size(min=3, max=120)
-  private String title;               // Заголовок события
+    @Size(min = 3, max = 120)
+    private String title;               // Заголовок события
 
 }
 

@@ -47,8 +47,7 @@ public class UserService {
     }
 
     /**
-     * Проверка, что объект существует,
-     * если нет - исключение, если да - возврат его самого
+     * Проверка, что сущность есть в БД, если нет - исключение, если да - возврат объекта с ней
      */
     public User checkExistAndGetUser(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User " + id));

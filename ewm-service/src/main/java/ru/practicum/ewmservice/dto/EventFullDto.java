@@ -1,12 +1,9 @@
 package ru.practicum.ewmservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.ewmservice.enums.*;
-
-import javax.validation.constraints.*;
+import ru.practicum.ewmservice.tools.Const;
 
 import java.time.LocalDateTime;
 
@@ -28,10 +25,10 @@ public class EventFullDto {
 
     private Integer confirmedRequests;  // Количество одобренных заявок на участие в данном событии
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Const.DT_PATTERN)
     private LocalDateTime createdOn;    // Дата и время создания события
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Const.DT_PATTERN)
     private LocalDateTime eventDate;    // Дата и время планируемого события
 
     private UserShortDto initiator;     // Инициатор
@@ -42,7 +39,7 @@ public class EventFullDto {
 
     private Integer participantLimit;   // Ограничение на количество участников. default: 0 - отсутствие ограничения
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Const.DT_PATTERN)
     private LocalDateTime publishedOn;  // Дата и время публикации события
 
     private Boolean requestModeration;  // Нужна ли пре-модерация заявок на участие.
@@ -50,8 +47,6 @@ public class EventFullDto {
     // Если false - то будут подтверждаться автоматически.
 
     private State state;                // Список состояний жизненного цикла события Enum: PENDING, PUBLISHED, CANCELED
-
-    //private StateAction stateAction;  // Состояние события (в этом DTO своё: state)
 
     private String title;               // Заголовок события
 
