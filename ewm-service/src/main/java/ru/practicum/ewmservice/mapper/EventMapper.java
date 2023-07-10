@@ -27,9 +27,9 @@ public class EventMapper {
      */
     public Event toEventFormNewEventDto(NewEventDto newEventDto, Long userId) { // Только для создания нового события
         Event event = new Event();
+
         event.setId(0L);
         event.setAnnotation(newEventDto.getAnnotation());
-
         event.setCategory(categoryService.checkExistAndGetCategory(newEventDto.getCategory())); // Category, из БД
         event.setDescription(newEventDto.getDescription());
         event.setConfirmedRequests(0); // Инициализация при создании нового объект
@@ -39,11 +39,16 @@ public class EventMapper {
         event.setLon(newEventDto.getLocation().getLon());
         event.setLat(newEventDto.getLocation().getLat());
         event.setPaid(newEventDto.getPaid());
-        event.setParticipantLimit(newEventDto.getParticipantLimit());
+        if (newEventDto.getParticipantLimit() == null) {
+            event.setParticipantLimit(0); // Значение ограничения участников по умолчанию
+        } else {
+            event.setParticipantLimit(newEventDto.getParticipantLimit());
+        }
         event.setRequestModeration(newEventDto.getRequestModeration());
         event.setState(State.PENDING);
         event.setTitle(newEventDto.getTitle());
         //event.set(newEventDto.get());
+
         return event;
     }
 
@@ -52,6 +57,7 @@ public class EventMapper {
      */
     public EventFullDto toEventFullDtoFromEvent(Event event) { // При получении события в web API в полном DTO
         EventFullDto eventFullDto = new EventFullDto();
+
         eventFullDto.setId(event.getId());
         eventFullDto.setAnnotation(event.getAnnotation());
         // Чтение не из БД, а напрямую из поля объекта event другого объекта (сущности) класса Category
@@ -70,8 +76,8 @@ public class EventMapper {
         eventFullDto.setTitle(event.getTitle());
         // Чтение из БД количества обращений к эндпоинтам событий вида /events/111
         eventFullDto.setViews(getViewsFromStat(event.getId()));
-
         //eventFullDto.set(event.get());
+
         return eventFullDto;
     }
 

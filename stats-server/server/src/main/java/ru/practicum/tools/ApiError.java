@@ -1,9 +1,9 @@
-package ru.practicum.ewmservice.tools.exception;
+package ru.practicum.tools;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
-import ru.practicum.ewmservice.tools.Const;
 
 import java.time.LocalDateTime;
 

@@ -7,8 +7,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmservice.dto.*;
 import ru.practicum.ewmservice.service.*;
+import ru.practicum.ewmservice.tools.ParamsForSearch;
+import ru.practicum.statdto.StatDto;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -84,10 +88,37 @@ public class AdminController {
     // Admin: События. API для работы с событиями --------------------------------------------------------
 
     /**
-     * GET /admin/events     Поиск событий
+     * GET /admin/events
+     * Поиск событий
+     * <p>
+     * Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
+     * В случае, если по заданным фильтрам не найдено ни одного события, возвращает пустой список
      */
+    @GetMapping("/events")
+    public List<EventFullDto> getSelectedEventForAdmin(@RequestParam(required = false) List<Long> users,
+                                                       @RequestParam(required = false) List<String> states,
+                                                       @RequestParam(required = false) List<Long> categories,
+                                                       @RequestParam(required = false) String rangeStart,
+                                                       @RequestParam(required = false) String rangeEnd,
+                                                       @RequestParam(defaultValue = "0") Long from,
+                                                       @RequestParam(defaultValue = "10") Long size,
+                                                       HttpServletRequest request) {
 
-    // !!!!!!!!!!!!!!!!!!!!!!!!
+        ParamsForSearch params = ParamsForSearch.builder()
+                .users(users)
+                .states(states)
+                .categories(categories)
+                .rangeStart(rangeStart)
+                .rangeEnd(rangeEnd)
+                .from(from)
+                .size(size)
+                .build();
+
+        log.info("Begin of 'GET /admin/events' (Admin API) all event by params: {}", params);
+
+        return null; // TODO eventService.getSelectedEventForAdmin(params); !!!!!!!!!!!!!!
+    }
+
 
     /**
      * Редактирование данных события и его статуса (отклонение/публикация).

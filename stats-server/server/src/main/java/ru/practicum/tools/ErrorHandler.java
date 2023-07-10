@@ -1,4 +1,4 @@
-package ru.practicum.ewmservice.tools.exception;
+package ru.practicum.tools;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionFailedException;
@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.DateTimeException;
@@ -26,6 +28,12 @@ public class ErrorHandler {
                 .reduce((error1, error2) -> error1 + "; " + error2)
                 .orElse("Validation failed");
         return All400Errors(errorMsg);
+    }
+
+    // Исключение при ошибке когда нет требуемого параметра в эндпоинте
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        return All400Errors(e.getMessage());
     }
 
     // Ответ 400 для прочих ошибок выбрасываемое "вручную"
@@ -67,18 +75,6 @@ public class ErrorHandler {
     private ResponseEntity All400Errors(String errorMsg) {
         HttpStatus code = HttpStatus.BAD_REQUEST; // 400
         ApiError response = new ApiError(code, "Incorrectly made request.", errorMsg);
-
-        log.warn(errorMsg);
-        return ResponseEntity.status(code).body(response);
-    }
-
-    // Ответ при исключении, что объект отсутствует
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity handleNotFoundException(NotFoundException e) {
-        String[] errorMsgs = e.getMessage().split(" ");
-        String errorMsg = errorMsgs[0] + " with id=" + errorMsgs[1] + " was not found";
-        HttpStatus code = HttpStatus.NOT_FOUND; // 404
-        ApiError response = new ApiError(code, "The required object was not found.", errorMsg);
 
         log.warn(errorMsg);
         return ResponseEntity.status(code).body(response);

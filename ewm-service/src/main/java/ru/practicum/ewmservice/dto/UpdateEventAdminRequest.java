@@ -25,7 +25,7 @@ public class UpdateEventAdminRequest {
   private String description;         // Описание
   // Тут время (+1 к Now как минимум) должно быть проверено на уровне бизнес-логики приложения
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Const.DT_PATTERN)
-  private LocalDateTime eventDate;    // Дата и время события в yyyy-MM-dd HH:mm:ss
+  private LocalDateTime eventDate;    // Дата и время события в Const.DT_PATTERN
   private Location location;          // Широта и долгота места проведения события
   private Boolean paid;               // Флаг о платности мероприятия
   private Integer participantLimit;   // Лимит пользователей

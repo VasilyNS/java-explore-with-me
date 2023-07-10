@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.statdto.StatDto;
 import ru.practicum.statdto.ViewStatsDto;
+import ru.practicum.tools.Const;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,10 +31,10 @@ public class StatController {
      * /stats?start=2020-05-05%2000:00:00&end=2035-05-05%2000:00:00&uris=/events/1&uris=/events/2&unique=true
      */
     @GetMapping("/stats")
-    public List<ViewStatsDto> getStat(@RequestParam(required = true)
-                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                      @RequestParam(required = true)
-                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+    public List<ViewStatsDto> getStat(@RequestParam
+                                      @DateTimeFormat(pattern = Const.DT_PATTERN) LocalDateTime start,
+                                      @RequestParam
+                                      @DateTimeFormat(pattern = Const.DT_PATTERN) LocalDateTime end,
                                       @RequestParam(required = false) List<String> uris,
                                       @RequestParam(defaultValue = "false") Boolean unique) {
         log.info("Begin of Stat getting (/stats) for start={}, end={}, uris={}, unique={}", start, end, uris, unique);
