@@ -13,10 +13,8 @@ import ru.practicum.ewmservice.mapper.EventMapper;
 import ru.practicum.ewmservice.model.Event;
 import ru.practicum.ewmservice.model.QEvent;
 import ru.practicum.ewmservice.repository.EventRepository;
-import ru.practicum.ewmservice.tools.Const;
-import ru.practicum.ewmservice.tools.ParamsForSearch;
-import ru.practicum.ewmservice.tools.exception.IncorrectRequestException;
-import ru.practicum.ewmservice.tools.exception.NotFoundException;
+import ru.practicum.ewmservice.tools.*;
+import ru.practicum.ewmservice.tools.exception.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,9 +32,8 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-
     @PersistenceContext
-    private EntityManager entityManager;
+    private EntityManager entityManager; // Для QueryDSL
 
     /**
      * Добавление нового события
@@ -79,8 +76,15 @@ public class EventService {
     public EventFullDto updateEventByAdmin(UpdateEventAdminRequest updateEventAdminRequest, Long eventId) {
         Event event = checkExistAndGetEvent(eventId);
 
-        if (updateEventAdminRequest.getStateAction() != null) {
+        // Предварительная проверка даты и ошибка 400, согласно тесту
+        // "Изменение даты события на уже наступившую"
+        if (updateEventAdminRequest.getEventDate() != null &&
+                updateEventAdminRequest.getEventDate()
+                        .isBefore(LocalDateTime.now())) {
+            throw new IncorrectRequestException("The date of the event must not occur");
+        }
 
+        if (updateEventAdminRequest.getStateAction() != null) {
             // Проверка условия: дата начала изменяемого события должна быть не ранее чем
             // за 1 час от даты публикации. (Ожидается код ошибки 409)
             // 1) Проверка что этот апдейт на публикацию
@@ -122,7 +126,21 @@ public class EventService {
     }
 
     /**
-     * Получение полной информации о событии добавленном текущим пользователем
+     * Получение событий, добавленных текущим пользователем
+     */
+    public List<EventFullDto> getAllEventsForCurrentUser(Long userId, Long from, Long size) {
+        QEvent qEvent = QEvent.event;
+        List<Event> events = new JPAQueryFactory(entityManager)
+                .selectFrom(qEvent)
+                .where(qEvent.initiator.id.eq(userId))
+                .offset(from)
+                .limit(size)
+                .fetch();
+        return events.stream().map(eventMapper::toEventFullDtoFromEvent).collect(Collectors.toList());
+    }
+
+    /**
+     * Получение полной информации о событии добавленном текущим пользователем PUB API (пример: GET /users/1/events/1)
      */
     @Transactional(readOnly = true)
     public EventFullDto getEventByIdForCurrentUser(Long userId, Long eventId) {
@@ -149,7 +167,7 @@ public class EventService {
      */
     @Transactional(readOnly = true)
     public List<EventFullDto> getSelectedEventsForPublic(ParamsForSearch params) {
-        Boolean isSortByViews = false; // Глобальный переключатель для работы метода
+        boolean isSortByViews = false; // Глобальный переключатель для работы метода
 
         // Для сложных "наборных" запросов используем QueryDSL, как самый гибкий инструмент составления запросов
         QEvent qEvent = QEvent.event;
@@ -165,7 +183,7 @@ public class EventService {
                     .or(qEvent.description.containsIgnoreCase(params.getText())));
         }
 
-        // Cписок идентификаторов категорий (categories) в которых будет вестись поиск
+        // Список идентификаторов категорий (categories) в которых будет вестись поиск
         if (params.getCategories() != null) {
             whereClause.and(qEvent.category.id.in(params.getCategories())); // .id!
         }
@@ -184,6 +202,10 @@ public class EventService {
             rangeStartLdt = LocalDateTime.parse(params.getRangeStart(), formatter);
             rangeEndLdt = LocalDateTime.parse(params.getRangeEnd(), formatter);
             whereClause.and(qEvent.eventDate.between(rangeStartLdt, rangeEndLdt));
+            // Проверка на корректность start и end
+            if (rangeStartLdt.isAfter(rangeEndLdt)) {
+                throw new IncorrectRequestException("The Start parameter cannot be after the End");
+            }
         } else {
             rangeStartLdt = LocalDateTime.now();
             whereClause.and(qEvent.eventDate.after(rangeStartLdt));
@@ -215,13 +237,12 @@ public class EventService {
                     .orderBy(orderSpecifier)
                     .offset(params.getFrom())
                     .limit(params.getSize())
-                    .fetch(); // читаем
-            List<EventFullDto> eventsFullDto = events.stream().map(eventMapper::toEventFullDtoFromEvent)
+                    .fetch();
+            return events.stream().map(eventMapper::toEventFullDtoFromEvent)
                     .collect(Collectors.toList());
-            return eventsFullDto;
         } else {
             /*
-            Для сортировки по просмотрам другой  подход.
+            Сортировка по просмотрам.
             События и информация для подсчета просмотров хранятся в разных базах. Без дополнительных таблиц в
             любой из этих баз мы не можем написать эффективную выборку с глобальной сортировкой для боевой базы
             с многими миллионами событий, пользователей и большой нагрузкой на серверы.
@@ -258,7 +279,70 @@ public class EventService {
 
             return eventsFullDtoWithPages;
         }
+    }
 
+    /**
+     * Поиск событий (Admin's API)
+     * Наборные условия для QueryDSL в зависимости от того, что задали в uri
+     */
+    public List<EventFullDto> getSelectedEventForAdmin(ParamsForSearch params) {
+        QEvent qEvent = QEvent.event;
+        BooleanBuilder whereClause = new BooleanBuilder();
+
+        // Список id пользователей, чьи события нужно найти
+        if (params.getUsers() != null) {
+            whereClause.and(qEvent.initiator.id.in(params.getUsers()));
+        }
+
+        // Список состояний в которых находятся искомые события
+        List<State> states = new ArrayList<>(); // Список из enum State, для оператора in
+        if (params.getStates() != null) {
+            for (String state : params.getStates()) {
+                states.add(State.valueOf(state)); // При ошибке в valueOf будет IllegalArgumentException
+            }
+            whereClause.and(qEvent.state.in(states));
+        }
+
+        // Список идентификаторов категорий (categories) в которых будет вестись поиск
+        if (params.getCategories() != null) {
+            whereClause.and(qEvent.category.id.in(params.getCategories())); // .id!
+        }
+
+        // rangeStart и rangeEnd
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Const.DT_PATTERN);
+        LocalDateTime rangeStartLdt;
+        LocalDateTime rangeEndLdt;
+        if (params.getRangeStart() != null) {
+            rangeStartLdt = LocalDateTime.parse(params.getRangeStart(), formatter);
+            whereClause.and(qEvent.eventDate.after(rangeStartLdt));
+        }
+        if (params.getRangeEnd() != null) {
+            rangeEndLdt = LocalDateTime.parse(params.getRangeEnd(), formatter);
+            whereClause.and(qEvent.eventDate.before(rangeEndLdt));
+        }
+
+        List<Event> events = new JPAQueryFactory(entityManager)
+                .selectFrom(qEvent)
+                .where(whereClause)
+                .offset(params.getFrom())
+                .limit(params.getSize())
+                .fetch();
+        return events.stream().map(eventMapper::toEventFullDtoFromEvent)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Увеличиваем счетчик confirmedRequests события, а если он уже заполнен до лимита, то исключение и код ошибки 409
+     */
+    @Transactional
+    public void incEventCountConfirmedRequests(Long id) {
+        Event event = checkExistAndGetEvent(id);
+        if (event.getConfirmedRequests() < event.getParticipantLimit()) {
+            eventRepository.incEventCountConfirmedRequests(id);
+        } else {
+            throw new DataIntegrityViolationException("The event has reached its limit of participation requests. " +
+                    "eventId=" + id + ", limit=" + event.getParticipantLimit());
+        }
     }
 
     /**

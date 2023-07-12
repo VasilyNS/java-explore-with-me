@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -26,6 +27,12 @@ public class ErrorHandler {
                 .reduce((error1, error2) -> error1 + "; " + error2)
                 .orElse("Validation failed");
         return All400Errors(errorMsg);
+    }
+
+    // Исключение при ошибке когда нет требуемого параметра в эндпоинте
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        return All400Errors(e.getMessage());
     }
 
     // Ответ 400 для прочих ошибок выбрасываемое "вручную"

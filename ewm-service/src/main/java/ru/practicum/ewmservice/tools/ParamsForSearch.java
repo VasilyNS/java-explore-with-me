@@ -1,14 +1,11 @@
 package ru.practicum.ewmservice.tools;
 
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.web.bind.annotation.RequestParam;
+import lombok.*;
 
 import java.util.List;
 
 /**
- * Класс для передачи параметров для поиска записей в БД для эндпоинтов,
- * а тажке демонстрация работы аннотации @Builder
+ * Класс для передачи параметров для поиска записей в БД для эндпоинтов
  */
 @Data
 @Builder

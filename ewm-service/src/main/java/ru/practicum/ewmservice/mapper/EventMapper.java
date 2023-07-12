@@ -27,7 +27,6 @@ public class EventMapper {
      */
     public Event toEventFormNewEventDto(NewEventDto newEventDto, Long userId) { // Только для создания нового события
         Event event = new Event();
-
         event.setId(0L);
         event.setAnnotation(newEventDto.getAnnotation());
         event.setCategory(categoryService.checkExistAndGetCategory(newEventDto.getCategory())); // Category, из БД
@@ -38,17 +37,24 @@ public class EventMapper {
         event.setInitiator(userService.checkExistAndGetUser(userId)); // Класс User, чтение из БД
         event.setLon(newEventDto.getLocation().getLon());
         event.setLat(newEventDto.getLocation().getLat());
-        event.setPaid(newEventDto.getPaid());
+        if (newEventDto.getPaid() == null) {
+            event.setPaid(false); // paid должно принять значение по умолчанию false
+        } else {
+            event.setPaid(newEventDto.getPaid());
+        }
         if (newEventDto.getParticipantLimit() == null) {
             event.setParticipantLimit(0); // Значение ограничения участников по умолчанию
         } else {
             event.setParticipantLimit(newEventDto.getParticipantLimit());
         }
-        event.setRequestModeration(newEventDto.getRequestModeration());
+        if (newEventDto.getRequestModeration() == null) {
+            event.setRequestModeration(true); // requestModeration должно принять значение по умолчанию true
+        } else {
+            event.setRequestModeration(newEventDto.getRequestModeration());
+        }
         event.setState(State.PENDING);
         event.setTitle(newEventDto.getTitle());
         //event.set(newEventDto.get());
-
         return event;
     }
 
@@ -57,7 +63,6 @@ public class EventMapper {
      */
     public EventFullDto toEventFullDtoFromEvent(Event event) { // При получении события в web API в полном DTO
         EventFullDto eventFullDto = new EventFullDto();
-
         eventFullDto.setId(event.getId());
         eventFullDto.setAnnotation(event.getAnnotation());
         // Чтение не из БД, а напрямую из поля объекта event другого объекта (сущности) класса Category
@@ -77,16 +82,14 @@ public class EventMapper {
         // Чтение из БД количества обращений к эндпоинтам событий вида /events/111
         eventFullDto.setViews(getViewsFromStat(event.getId()));
         //eventFullDto.set(event.get());
-
         return eventFullDto;
     }
 
     /**
      * Для получения короткого JSON о событии
      */
-    public EventShortDto toeventShortDtoFromEvent(Event event) { // При получении события в web API в полном DTO
+    public EventShortDto toEventShortDtoFromEvent(Event event) { // При получении события в web API в полном DTO
         EventShortDto eventShortDto = new EventShortDto();
-
         eventShortDto.setId(event.getId());
         eventShortDto.setAnnotation(event.getAnnotation());
         // Чтение не из БД, а напрямую из поля объекта event другого объекта (сущности) класса Category
@@ -99,7 +102,6 @@ public class EventMapper {
         eventShortDto.setTitle(event.getTitle());
         // Чтение из БД количества обращений к эндпоинтам событий вида /events/111
         eventShortDto.setViews(getViewsFromStat(event.getId()));
-
         return eventShortDto;
     }
 
@@ -207,7 +209,7 @@ public class EventMapper {
     private Long getViewsFromStat(Long id) {
         LocalDateTime st = LocalDateTime.now().minusYears(1);
         LocalDateTime end = LocalDateTime.now().plusYears(1);
-        List<ViewStatsDto> viewStatsDtos = statClient.getStat(st, end, List.of("/events/" + id), false);
+        List<ViewStatsDto> viewStatsDtos = statClient.getStat(st, end, List.of("/events/" + id), true);
         if (viewStatsDtos == null || viewStatsDtos.size() == 0) {
             return 0L;
         } else {

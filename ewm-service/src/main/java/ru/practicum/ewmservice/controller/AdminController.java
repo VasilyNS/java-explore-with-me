@@ -29,8 +29,9 @@ public class AdminController {
     private final UserService userService;
     private final CategoryService categoryService;
     private final EventService eventService;
+    private final CompilationService compilationService;
 
-    // Admin: Пользователи. API для работы с пользователями --------------------------------------------------------
+    // Admin: Пользователи. API для работы с пользователями ------------------------------------------------------------
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED) // 201
@@ -59,7 +60,7 @@ public class AdminController {
         userService.deleteUser(id);
     }
 
-    // Admin: Категории. API для работы с категориями --------------------------------------------------------
+    // Admin: Категории. API для работы с категориями ------------------------------------------------------------------
 
     /**
      * Добавление новой категории, имя категории должно быть уникальным
@@ -85,10 +86,9 @@ public class AdminController {
         return categoryService.updateCategory(id, categoryDto);
     }
 
-    // Admin: События. API для работы с событиями --------------------------------------------------------
+    // Admin: События. API для работы с событиями ----------------------------------------------------------------------
 
     /**
-     * GET /admin/events
      * Поиск событий
      * <p>
      * Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
@@ -116,9 +116,8 @@ public class AdminController {
 
         log.info("Begin of 'GET /admin/events' (Admin API) all event by params: {}", params);
 
-        return null; // TODO eventService.getSelectedEventForAdmin(params); !!!!!!!!!!!!!!
+        return eventService.getSelectedEventForAdmin(params);
     }
-
 
     /**
      * Редактирование данных события и его статуса (отклонение/публикация).
@@ -137,9 +136,23 @@ public class AdminController {
         return eventService.updateEventByAdmin(updateEventAdminRequest, eventId);
     }
 
-    //  --------------------------------------------------------
+    // Admin: Подборки событий. API для работы с подборками событий ----------------------------------------------------
 
-    // Admin: Подборки событий. API для работы с подборками событий --------------------------------------------------------
+    /**
+     * Добавление новой подборки (подборка может не содержать событий)
+     */
+    @PostMapping("/compilations")
+    @ResponseStatus(HttpStatus.CREATED) // 201
+    public CompilationDto saveCompilation(@Valid @RequestBody NewCompilationDto newCompilationDto) {
+        log.info("Begin of 'POST /admin/compilations' Compilation creation for: {}", newCompilationDto.toString());
+        return compilationService.saveCompilation(newCompilationDto);
+    }
+
+
+
+
+
+
 
 
 }

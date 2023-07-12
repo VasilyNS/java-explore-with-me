@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.ewmservice.tools.Const;
 import ru.practicum.statclient.StatClient;
 import ru.practicum.statdto.StatDto;
 import ru.practicum.statdto.ViewStatsDto;
@@ -39,7 +40,7 @@ public class TESTController {
         //        int i = 5 / 0;
 
         // Отправляем статистику на сервер
-        StatDto statDto = new StatDto("ewm-main-service", request.getRequestURI(),
+        StatDto statDto = new StatDto(Const.SERVICE_NAME_FOR_STAT, request.getRequestURI(),
                 request.getRemoteAddr(), LocalDateTime.now());
         statClient.saveStat(statDto);
 

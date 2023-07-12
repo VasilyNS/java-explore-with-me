@@ -15,10 +15,4 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "ORDER BY c.id ASC ")
     List<CategoryDto> getAllCategories(Pageable pageable);
 
-//    @Query("SELECT new ru.practicum.ewmservice.dto.UserDto(u.id, u.name, u.email) " +
-//            "FROM User u " +
-//            "WHERE u.id IN :ids " +
-//            "ORDER BY u.id ASC ")
-//    List<UserDto> findUsersByIds(List<Long> ids, Pageable pageable);
-
 }

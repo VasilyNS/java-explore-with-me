@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmservice.dto.*;
 import ru.practicum.ewmservice.service.*;
+import ru.practicum.ewmservice.tools.Const;
 import ru.practicum.ewmservice.tools.ParamsForSearch;
 import ru.practicum.statclient.StatClient;
 import ru.practicum.statdto.StatDto;
@@ -92,7 +93,7 @@ public class PublicController {
         log.info("Begin of 'GET /events' (Public API) all event by params: {}", params);
 
         // Для этого эндпоинта необходимо отправить статистику на сервер статистики через клиента
-        StatDto statDto = new StatDto("ewm-main-service", request.getRequestURI(),
+        StatDto statDto = new StatDto(Const.SERVICE_NAME_FOR_STAT, request.getRequestURI(),
                 request.getRemoteAddr(), LocalDateTime.now());
         statClient.saveStat(statDto);
 
@@ -113,7 +114,7 @@ public class PublicController {
         log.info("Begin of 'GET /events/{id}' (Public API) Event, eventId={}", id);
 
         // Для этого эндпоинта необходимо отправить статистику на сервер статистики через клиента
-        StatDto statDto = new StatDto("ewm-main-service", request.getRequestURI(),
+        StatDto statDto = new StatDto(Const.SERVICE_NAME_FOR_STAT, request.getRequestURI(),
                 request.getRemoteAddr(), LocalDateTime.now());
         statClient.saveStat(statDto);
 
