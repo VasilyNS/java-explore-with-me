@@ -26,52 +26,52 @@ public class ErrorHandler {
                         + ". Value: " + error.getRejectedValue())
                 .reduce((error1, error2) -> error1 + "; " + error2)
                 .orElse("Validation failed");
-        return all400Errors(errorMsg);
+        return forAllErrorCodes400(errorMsg);
     }
 
     // Исключение при ошибке когда нет требуемого параметра в эндпоинте
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
-        return all400Errors(e.getMessage());
+        return forAllErrorCodes400(e.getMessage());
     }
 
     // Ответ 400 для прочих ошибок выбрасываемое "вручную"
     @ExceptionHandler(IncorrectRequestException.class)
     public ResponseEntity handleIncorrectRequestException(IncorrectRequestException e) {
-        return all400Errors(e.getMessage());
+        return forAllErrorCodes400(e.getMessage());
     }
 
     // Исключение при ошибке конвертации данных выбрасываемое автоматически
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        return all400Errors(e.getMessage());
+        return forAllErrorCodes400(e.getMessage());
     }
 
     // Исключение при ошибке конвертации данных выбрасываемое автоматически
     @ExceptionHandler(NumberFormatException.class)
     public ResponseEntity handleNumberFormatException(NumberFormatException e) {
-        return all400Errors(e.getMessage());
+        return forAllErrorCodes400(e.getMessage());
     }
 
     // Исключение при ошибке конвертации данных выбрасываемое автоматически
     @ExceptionHandler(DateTimeException.class)
     public ResponseEntity handleDateTimeException(DateTimeException e) {
-        return all400Errors(e.getMessage());
+        return forAllErrorCodes400(e.getMessage());
     }
 
     // Исключение при ошибке конвертации данных выбрасываемое автоматически
     @ExceptionHandler(ConversionFailedException.class)
     public ResponseEntity handleConversionFailedException(ConversionFailedException e) {
-        return all400Errors(e.getMessage());
+        return forAllErrorCodes400(e.getMessage());
     }
 
     // Исключение при ошибке конвертации данных выбрасываемое автоматически
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity handleIllegalStateException(IllegalStateException e) {
-        return all400Errors(e.getMessage());
+        return forAllErrorCodes400(e.getMessage());
     }
 
-    private ResponseEntity all400Errors(String errorMsg) {
+    private ResponseEntity forAllErrorCodes400(String errorMsg) {
         HttpStatus code = HttpStatus.BAD_REQUEST; // 400
         ApiError response = new ApiError(code, "Incorrectly made request.", errorMsg);
 
