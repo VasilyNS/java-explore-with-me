@@ -12,9 +12,9 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class CategoryDto {
 
-  private Long id;           // Идентификатор категории
+    private Long id;           // Идентификатор категории
 
-  @Size(min=1,max=50)
-  private String name;       // Название категории
+    @Size(min = 1, max = 50)
+    private String name;       // Название категории
 
 }
