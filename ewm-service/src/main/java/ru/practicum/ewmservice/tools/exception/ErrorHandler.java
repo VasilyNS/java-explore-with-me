@@ -71,7 +71,7 @@ public class ErrorHandler {
         return All400Errors(e.getMessage());
     }
 
-    private ResponseEntity All400Errors(String errorMsg) {
+    private ResponseEntity all400Errors(String errorMsg) {
         HttpStatus code = HttpStatus.BAD_REQUEST; // 400
         ApiError response = new ApiError(code, "Incorrectly made request.", errorMsg);
 
