@@ -130,7 +130,7 @@ public class RequestService {
         boolean fromHereOnlyRejections = false; // Флаг, что дальше только отказы
         int confirmedCount = 0; // Сколько заявок было одобрено
 
-        for (Long requestId : requestsStatus.getRequestIds()) { // Для всех индексов в заяявке
+        for (Long requestId : requestsStatus.getRequestIds()) { // Для всех индексов в заявке
             Request request = checkExistAndGetRequest(requestId);
             if (request.getStatus().equals(Status.PENDING)) {
                 if (requestsStatus.getStatus().equals(Status.CONFIRMED)) { // Согласовываем заявки
@@ -153,7 +153,7 @@ public class RequestService {
                             " userId=" + userId + ", eventId=" + eventId + ", " + requestsStatus);
                 }
                 requestRepository.save(request);
-            } else { // Cтатус можно изменить только у заявок, находящихся в состоянии ожидания (-> 409)
+            } else { // Статус можно изменить только у заявок, находящихся в состоянии ожидания (-> 409)
                 throw new DataIntegrityViolationException("User is attempting to confirm or reject request " +
                         "that has status other than PENDING. userId=" + userId + ", eventId=" + eventId);
             }

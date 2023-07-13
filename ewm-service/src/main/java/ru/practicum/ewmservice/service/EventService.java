@@ -87,7 +87,7 @@ public class EventService {
         if (updateEventAdminRequest.getStateAction() != null) {
             // Проверка условия: дата начала изменяемого события должна быть не ранее чем
             // за 1 час от даты публикации. (Ожидается код ошибки 409)
-            // 1) Проверка что этот апдейт на публикацию
+            // 1) Проверка, что этот апдейт на публикацию
             if (updateEventAdminRequest.getStateAction().equals(StateAction.PUBLISH_EVENT)) {
                 // 2) Изначально берем дату из ивента в базе
                 LocalDateTime checkDate = event.getEventDate();
@@ -282,7 +282,7 @@ public class EventService {
     }
 
     /**
-     * Поиск событий (Admin's API)
+     * Поиск событий (Admin API)
      * Наборные условия для QueryDSL в зависимости от того, что задали в uri
      */
     public List<EventFullDto> getSelectedEventForAdmin(ParamsForSearch params) {

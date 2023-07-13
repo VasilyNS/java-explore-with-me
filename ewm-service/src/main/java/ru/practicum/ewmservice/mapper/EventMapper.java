@@ -140,7 +140,7 @@ public class EventMapper {
                     event.getState().equals(State.PENDING)) {
                 event.setState(State.CANCELED);
             }
-            // Если событие было "снято с ревью" (CANCELED), то снова отправлем на ревью (PENDING)
+            // Если событие было "снято с ревью" (CANCELED), то снова отправляем на ревью (PENDING)
             if (updateEventUserRequest.getStateAction().equals(StateAction.SEND_TO_REVIEW) &&
                     event.getState().equals(State.CANCELED)) {
                 event.setState(State.PENDING);

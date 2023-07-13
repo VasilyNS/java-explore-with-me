@@ -37,7 +37,7 @@ public class EventFullDto {
 
     private Boolean paid;               // Нужно ли оплачивать участие в событии, default: false
 
-    private Integer participantLimit;   // Ограничение на количество участников. default: 0 - отсутствие ограничения
+    private Integer participantLimit;   // Ограничение на количество участников. Default: 0 - отсутствие ограничения
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Const.DT_PATTERN)
     private LocalDateTime publishedOn;  // Дата и время публикации события

@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class RequestMapper {
 
     private final UserService userService;
-    private final CategoryService categoryService;
     private final EventService eventService;
 
     /**
