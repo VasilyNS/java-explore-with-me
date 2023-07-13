@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <artifactId>explore-with-me</artifactId>
+        <artifactId>stats-server</artifactId>
         <groupId>ru.practicum</groupId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -80,6 +80,7 @@
 
     </dependencies>
 
+    <!-- Добавление манифеста для запуска в контейнере -->
     <build>
         <plugins>
             <plugin>
