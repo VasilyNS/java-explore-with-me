@@ -102,5 +102,4 @@ public class ErrorHandler {
         return ResponseEntity.status(code).body(response);
     }
 
-
 }

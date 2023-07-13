@@ -22,14 +22,6 @@ public class UserMapper {
         );
     }
 
-    public static User toUser(UserDto userDto) {
-        return new User(
-                userDto.getId(),
-                userDto.getName(),
-                userDto.getEmail()
-        );
-    }
-
     public static User toUserFromNewUserRequest(NewUserRequest newUserRequest) {
         return new User(
                 0L,

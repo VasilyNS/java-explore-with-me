@@ -26,9 +26,10 @@ public class PublicController {
 
     private final CategoryService categoryService;
     private final EventService eventService;
+    private final CompilationService compilationService;
     private final StatClient statClient;
 
-    // Public: Категории - Публичный API для работы с категориями ------------------------------------
+    // Public: Категории - Публичный API для работы с категориями ------------------------------------------------------
 
     /**
      * В случае, если по заданным фильтрам не найдено ни одной категории, возвращает пустой список
@@ -51,7 +52,7 @@ public class PublicController {
         return categoryService.getCategoryById(id);
     }
 
-    // Public: События. Публичный API для работы с событиями ------------------------------------
+    // Public: События. Публичный API для работы с событиями -----------------------------------------------------------
 
     /**
      * Получение событий с возможностью фильтрации
@@ -100,7 +101,6 @@ public class PublicController {
         return eventService.getSelectedEventsForPublic(params);
     }
 
-
     /**
      * Получение подробной информации об опубликованном событии по его идентификатору
      * <p>
@@ -119,6 +119,30 @@ public class PublicController {
         statClient.saveStat(statDto);
 
         return eventService.getEventByIdForPublicApi(id);
+    }
+
+    // Public: Подборки событий. Публичный API для работы с подборками событий -----------------------------------------
+
+    /**
+     * Получение подборок событий (Public API)
+     * В случае, если по заданным фильтрам не найдено ни одной подборки, возвращает пустой список
+     */
+    @GetMapping("/compilations")
+    public List<CompilationDto> getCompilations(@RequestParam(required = false) Boolean pinned,
+                                                @RequestParam(defaultValue = "0") Long from,
+                                                @RequestParam(defaultValue = "10") Long size) {
+        log.info("Begin of 'GET /compilations' (Public API) all compilations by params, pinned={}", pinned);
+        return compilationService.getCompilations(pinned, from, size);
+    }
+
+    /**
+     * Получение подборки событий по его id (Public API)
+     * В случае, если подборки с заданным id не найдено, возвращает статус код 404
+     */
+    @GetMapping("/compilations/{compId}")
+    public CompilationDto getCompilationById(@PathVariable Long compId) {
+        log.info("Begin of 'GET /compilations/{compId}' (Public API) Compilations by id, compId={}", compId);
+        return compilationService.getCompilationById(compId);
     }
 
 

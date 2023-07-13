@@ -12,11 +12,11 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Category {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(name = "name", nullable = false)
-  private String name;       // Название категории
+    @Column(name = "name", nullable = false)
+    private String name;       // Название категории
 
 }

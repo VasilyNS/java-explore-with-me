@@ -1,6 +1,6 @@
 package ru.practicum.ewmservice.mapper;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmservice.dto.*;
 import ru.practicum.ewmservice.enums.*;

@@ -3,11 +3,9 @@ package ru.practicum.ewmservice.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmservice.dto.*;
-import ru.practicum.ewmservice.enums.*;
 import ru.practicum.ewmservice.model.*;
 import ru.practicum.ewmservice.service.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,30 +14,23 @@ import java.util.List;
 public class CompilationMapper {
 
     private final EventService eventService;
-    private final CategoryService categoryService;
     private final EventMapper eventMapper;
 
     /**
-     * Для создания нового ...
+     * Для создания новой подборки, DTO -> Сущность
      */
     public Compilation toCompilationFormNewCompilationDto(NewCompilationDto newCompilationDto) {
         Compilation compilation = new Compilation();
         compilation.setId(0L);
-        if (newCompilationDto.getEvents() == null) {
-            compilation.setEvents(new ArrayList<Event>());
-        } else {
-            List<Event> events = new ArrayList<>();
-            for (Long eventId : newCompilationDto.getEvents()) {
-                Event event = eventService.checkExistAndGetEvent(eventId);
-                events.add(event);
-            }
-            compilation.setEvents(events);
-        }
+        compilation.setEvents(fillEvents(newCompilationDto.getEvents()));
         compilation.setPinned(newCompilationDto.getPinned());
         compilation.setTitle(newCompilationDto.getTitle());
         return compilation;
     }
 
+    /**
+     * Сущность -> DTO
+     */
     public CompilationDto toCompilationDtoFormCompilation(Compilation compilation) {
         CompilationDto compilationDto = new CompilationDto();
         compilationDto.setId(compilation.getId());
@@ -56,5 +47,33 @@ public class CompilationMapper {
         return compilationDto;
     }
 
+    /**
+     * Для апдейта подборки (Admin API)
+     */
+    public Compilation toCompilationFromUpdateEventUserRequest(Compilation comp, UpdateCompilationRequest upd) {
+        // Заменяем поля только если они не null
+        comp.setEvents(fillEvents(upd.getEvents()));
+        if (upd.getPinned() != null) {
+            comp.setPinned(upd.getPinned());
+        }
+        if (upd.getTitle() != null) {
+            comp.setTitle(upd.getTitle());
+        }
+        return comp;
+    }
+
+    /**
+     * Заполнение поля events
+     */
+    private List<Event> fillEvents(List<Long> eventIds) {
+        List<Event> result = new ArrayList<>();
+        if (eventIds != null) {
+            for (Long eventId : eventIds) {
+                Event event = eventService.checkExistAndGetEvent(eventId);
+                result.add(event);
+            }
+        }
+        return result;
+    }
 
 }

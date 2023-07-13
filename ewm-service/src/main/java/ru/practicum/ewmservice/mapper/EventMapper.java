@@ -1,13 +1,11 @@
 package ru.practicum.ewmservice.mapper;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmservice.dto.*;
-import ru.practicum.ewmservice.enums.State;
-import ru.practicum.ewmservice.enums.StateAction;
+import ru.practicum.ewmservice.enums.*;
 import ru.practicum.ewmservice.model.*;
-import ru.practicum.ewmservice.service.CategoryService;
-import ru.practicum.ewmservice.service.UserService;
+import ru.practicum.ewmservice.service.*;
 import ru.practicum.statclient.StatClient;
 import ru.practicum.statdto.ViewStatsDto;
 
@@ -54,7 +52,6 @@ public class EventMapper {
         }
         event.setState(State.PENDING);
         event.setTitle(newEventDto.getTitle());
-        //event.set(newEventDto.get());
         return event;
     }
 
@@ -68,7 +65,7 @@ public class EventMapper {
         // Чтение не из БД, а напрямую из поля объекта event другого объекта (сущности) класса Category
         eventFullDto.setCategory(CategoryMapper.toCategoryDto(event.getCategory()));
         eventFullDto.setDescription(event.getDescription());
-        eventFullDto.setConfirmedRequests(event.getConfirmedRequests());    // TODO: Хранится ли в базе???
+        eventFullDto.setConfirmedRequests(event.getConfirmedRequests());
         eventFullDto.setCreatedOn(event.getCreatedOn());
         eventFullDto.setEventDate(event.getEventDate());
         // Чтение не из БД, а напрямую из поля объекта event другого объекта (сущности) класса User
@@ -106,7 +103,7 @@ public class EventMapper {
     }
 
     /**
-     * Апдейт события для пользователя (закрытое API)
+     * Апдейт события для пользователя (Admin API)
      */
     public Event toEventFromUpdateEventUserRequest(Event event, UpdateEventUserRequest updateEventUserRequest) {
         // Заменяем только если поле не null!

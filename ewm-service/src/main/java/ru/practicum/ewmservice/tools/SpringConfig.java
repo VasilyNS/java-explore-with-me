@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Необходимо прописать в конфигурационном классе через @ComponentScan
- * где искать бины из другого модуля !!!
+ * где искать бины из другого модуля
  * По ТЗ клиент статистики должен быть в другом модуле
  */
 @Configuration

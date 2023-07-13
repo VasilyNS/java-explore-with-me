@@ -1,7 +1,6 @@
 package ru.practicum.ewmservice.model;
 
 import lombok.*;
-import ru.practicum.ewmservice.dto.EventShortDto;
 
 import javax.persistence.*;
 import java.util.List;
@@ -22,11 +21,9 @@ public class Compilation {
     private Long id;                    // Идентификатор
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "compilation_event",
+    @JoinTable(name = "compilation_event",
             joinColumns = @JoinColumn(name = "compilation_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
     private List<Event> events;         // Список событий входящих в подборку
 
     @Column(name = "pinned")

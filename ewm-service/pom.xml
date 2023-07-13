@@ -79,22 +79,16 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- Две зависимости для         -->
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
             <version>5.0.0</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>com.querydsl</groupId>-->
-        <!--            <artifactId>querydsl-core</artifactId>-->
-        <!--        </dependency>-->
-
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Добавлением манифеста для запуска кода в контейнере -->
+            <!-- Добавление манифеста для запуска кода в контейнере -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -107,7 +101,7 @@
                 </executions>
             </plugin>
 
-            <!-- Данный плагин необходим для работы QueryDSL -->
+            <!-- Данный плагин необходим для работы QueryDSL дял генерации Q-классов -->
             <plugin>
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>apt-maven-plugin</artifactId>

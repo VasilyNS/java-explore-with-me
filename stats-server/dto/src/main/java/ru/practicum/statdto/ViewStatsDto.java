@@ -1,8 +1,6 @@
 package ru.practicum.statdto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * DTO для получения статистики hits - счетчик

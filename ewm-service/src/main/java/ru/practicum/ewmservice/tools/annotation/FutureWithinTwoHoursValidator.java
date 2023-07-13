@@ -12,7 +12,7 @@ public class FutureWithinTwoHoursValidator implements ConstraintValidator<Future
     @Override
     public boolean isValid(LocalDateTime value, ConstraintValidatorContext context) {
         if (value == null) {
-            return true; // Поле может быть пустым, если это разрешено в логике
+            return true; // Поле может быть пустым, если это разрешено логикой приложения
         }
 
         LocalDateTime twoHoursFromNow = LocalDateTime.now().plusHours(2);

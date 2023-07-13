@@ -17,24 +17,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Request {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;                  // Идентификатор заявки
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;                  // Идентификатор заявки
 
-  @Column(name = "created")
-  private LocalDateTime created;    // Дата и время создания заявки
+    @Column(name = "created")
+    private LocalDateTime created;    // Дата и время создания заявки
 
-  @ManyToOne
-  @JoinColumn(name = "event_id")
-  @ToString.Exclude
-  private Event event;               // Идентификатор события
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    @ToString.Exclude
+    private Event event;               // Идентификатор события
 
-  @ManyToOne
-  @JoinColumn(name = "requester_id")
-  @ToString.Exclude
-  private User requester;           // Идентификатор пользователя, отправившего заявку
+    @ManyToOne
+    @JoinColumn(name = "requester_id")
+    @ToString.Exclude
+    private User requester;           // Идентификатор пользователя, отправившего заявку
 
-  @Column(name = "status")
-  private Status status;            // Статус заявки
+    @Column(name = "status")
+    private Status status;            // Статус заявки
 
 }

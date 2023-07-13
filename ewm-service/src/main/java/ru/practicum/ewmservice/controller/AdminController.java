@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmservice.dto.*;
 import ru.practicum.ewmservice.service.*;
 import ru.practicum.ewmservice.tools.ParamsForSearch;
-import ru.practicum.statdto.StatDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -139,7 +137,7 @@ public class AdminController {
     // Admin: Подборки событий. API для работы с подборками событий ----------------------------------------------------
 
     /**
-     * Добавление новой подборки (подборка может не содержать событий)
+     * Добавление новой подборки, подборка может не содержать событий (Admin API)
      */
     @PostMapping("/compilations")
     @ResponseStatus(HttpStatus.CREATED) // 201
@@ -148,11 +146,25 @@ public class AdminController {
         return compilationService.saveCompilation(newCompilationDto);
     }
 
+    /**
+     * Удаление подборки (Admin API)
+     */
+    @DeleteMapping("/compilations/{compId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT) // 204
+    public void delCompilation(@PathVariable Long compId) {
+        log.info("Begin of 'DELETE /admin/compilations/{compId}' Compilation deleting, id={}", compId);
+        compilationService.delCompilation(compId);
+    }
 
-
-
-
-
-
+    /**
+     * Обновление информации о подборке (Admin API)
+     */
+    @PatchMapping("/compilations/{compId}")
+    public CompilationDto updateCompilation(@PathVariable Long compId,
+                                            @Valid @RequestBody UpdateCompilationRequest updateCompilationRequest) {
+        log.info("Begin of 'PATCH /admin/compilations/{compId}' Compilation updating, compId={}, {}",
+                compId, updateCompilationRequest);
+        return compilationService.updateCompilation(compId, updateCompilationRequest);
+    }
 
 }

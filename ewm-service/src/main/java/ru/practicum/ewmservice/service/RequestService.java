@@ -1,29 +1,16 @@
 package ru.practicum.ewmservice.service;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmservice.dto.*;
 import ru.practicum.ewmservice.enums.*;
 import ru.practicum.ewmservice.mapper.*;
 import ru.practicum.ewmservice.model.*;
 import ru.practicum.ewmservice.repository.*;
-import ru.practicum.ewmservice.tools.*;
-import ru.practicum.ewmservice.tools.exception.IncorrectRequestException;
 import ru.practicum.ewmservice.tools.exception.NotFoundException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +23,6 @@ public class RequestService {
     private final EventRepository eventRepository;
     private final RequestMapper requestMapper;
     private final EventService eventService;
-
-    @PersistenceContext
-    private EntityManager entityManager; // Для QueryDSL
 
     /**
      * Добавление запроса от текущего пользователя на участие в событии

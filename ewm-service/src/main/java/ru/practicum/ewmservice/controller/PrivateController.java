@@ -144,20 +144,13 @@ public class PrivateController {
      */
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public EventRequestStatusUpdateResult updateRequestsStatus(@Valid @RequestBody
-                                                                     EventRequestStatusUpdateRequest requestsStatus,
-                                                                     @PathVariable Long userId,
-                                                                     @PathVariable Long eventId) {
+                                                               EventRequestStatusUpdateRequest requestsStatus,
+                                                               @PathVariable Long userId,
+                                                               @PathVariable Long eventId) {
         log.info("Begin of 'PATCH /users/{userId}/events/{eventId}/requests' update Requests status. " +
                 "userId={}, eventId={}, EventRequestStatusUpdateRequest={}", userId, eventId, requestsStatus.toString());
         return requestService.updateRequestsStatus(userId, eventId, requestsStatus);
     }
-
-
-
-
-
-
-
 
 
 }
