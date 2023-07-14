@@ -1,7 +1,6 @@
 package ru.practicum.ewmservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.dto.*;
@@ -9,7 +8,7 @@ import ru.practicum.ewmservice.enums.*;
 import ru.practicum.ewmservice.mapper.*;
 import ru.practicum.ewmservice.model.*;
 import ru.practicum.ewmservice.repository.*;
-import ru.practicum.ewmservice.tools.exception.NotFoundException;
+import ru.practicum.ewmservice.tools.exception.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,20 +33,20 @@ public class RequestService {
 
         // Инициатор события не может добавить запрос на участие в своём событии (код ошибки 409)
         if (event.getInitiator().getId().equals(userId)) {
-            throw new DataIntegrityViolationException("An event initiator cannot add a participation " +
+            throw new DataIntegrityFailureException("An event initiator cannot add a participation " +
                     "request to their event. userId=" + userId + ", eventId=" + eventId);
         }
 
         // Нельзя участвовать в неопубликованном событии (код ошибки 409)
         if (!event.getState().equals(State.PUBLISHED)) {
-            throw new DataIntegrityViolationException("You can't participate in an unpublished event. " +
+            throw new DataIntegrityFailureException("You can't participate in an unpublished event. " +
                     "userId=" + userId + ", eventId=" + eventId);
         }
 
         // Если у события достигнут лимит запросов на участие - необходимо вернуть ошибку (код ошибки 409)
         if (event.getParticipantLimit() != 0
                 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new DataIntegrityViolationException("The event has reached its limit of participation requests. " +
+            throw new DataIntegrityFailureException("The event has reached its limit of participation requests. " +
                     "userId=" + userId + ", eventId=" + eventId);
         }
 
@@ -76,7 +75,7 @@ public class RequestService {
         Request request = checkExistAndGetRequest(requestId);
 
         if (!request.getRequester().getId().equals(userId)) { // Попытка отменить не свой запрос
-            throw new DataIntegrityViolationException("Attempting to cancel a request that is not your own." +
+            throw new DataIntegrityFailureException("Attempting to cancel a request that is not your own." +
                     " userId=" + userId + ", requestId=" + requestId);
         }
 
@@ -117,13 +116,13 @@ public class RequestService {
 
         // Проверка, что пользователь согласовывает заявки на своё событие
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new DataIntegrityViolationException("User can only approve requests for his event." +
+            throw new DataIntegrityFailureException("User can only approve requests for his event." +
                     " userId=" + userId + ", eventId=" + eventId);
         }
 
         // Нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие (Ожидается код ошибки 409)
         if (event.getParticipantLimit() != 0 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new DataIntegrityViolationException("You cannot approve requests if the approvals counter is full." +
+            throw new DataIntegrityFailureException("You cannot approve requests if the approvals counter is full." +
                     " userId=" + userId + ", eventId=" + eventId + ", participantLimit=" + event.getParticipantLimit());
         }
 
@@ -149,12 +148,12 @@ public class RequestService {
                 } else if (requestsStatus.getStatus().equals(Status.REJECTED)) { // Отказываем в заявке
                     request.setStatus(Status.REJECTED);
                 } else {
-                    throw new DataIntegrityViolationException("Status can only be CONFIRMED or REJECTED." +
+                    throw new DataIntegrityFailureException("Status can only be CONFIRMED or REJECTED." +
                             " userId=" + userId + ", eventId=" + eventId + ", " + requestsStatus);
                 }
                 requestRepository.save(request);
             } else { // Статус можно изменить только у заявок, находящихся в состоянии ожидания (-> 409)
-                throw new DataIntegrityViolationException("User is attempting to confirm or reject request " +
+                throw new DataIntegrityFailureException("User is attempting to confirm or reject request " +
                         "that has status other than PENDING. userId=" + userId + ", eventId=" + eventId);
             }
         }

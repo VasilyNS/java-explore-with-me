@@ -42,7 +42,6 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long id) {
-        checkExistAndGetUser(id);
         userRepository.deleteById(id);
     }
 

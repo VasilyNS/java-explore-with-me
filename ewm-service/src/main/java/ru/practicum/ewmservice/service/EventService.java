@@ -4,7 +4,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.dto.*;
@@ -59,7 +58,7 @@ public class EventService {
         }
         // Изменить можно только отмененные события или события в состоянии ожидания модерации
         if (!(event.getState().equals(State.CANCELED) || event.getState().equals(State.PENDING))) {
-            throw new DataIntegrityViolationException("Only pending or canceled events can be changed"); // Код 409
+            throw new DataIntegrityFailureException("Only pending or canceled events can be changed"); // Код 409
         }
 
         // Редактируем все поля, которые пришли в updateEventUserRequest и не null
@@ -98,13 +97,13 @@ public class EventService {
                 LocalDateTime checkDateMinusTime = checkDate.minusHours(1);
                 // 4) Проверка на разницу менее 1 часа и выброс исключения
                 if (checkDateMinusTime.isBefore(LocalDateTime.now())) {
-                    throw new DataIntegrityViolationException("The start date of the event to be changed must "
+                    throw new DataIntegrityFailureException("The start date of the event to be changed must "
                             + "be no earlier than 1 hour from the date of publication"); // Код 409
                 }
 
                 // Проверка условия: событие можно публиковать, только если оно в состоянии ожидания публикации (-> 409)
                 if (!event.getState().equals(State.PENDING)) {
-                    throw new DataIntegrityViolationException("The event can be published only if it is "
+                    throw new DataIntegrityFailureException("The event can be published only if it is "
                             + "pending publication"); // Код 409
                 }
             }
@@ -112,7 +111,7 @@ public class EventService {
             // Проверка условия: событие можно отклонить, только если оно еще не опубликовано (Иначе искл. 409)
             if (updateEventAdminRequest.getStateAction().equals(StateAction.REJECT_EVENT)) {
                 if (event.getState().equals(State.PUBLISHED)) {
-                    throw new DataIntegrityViolationException("The event can only be rejected if it has not "
+                    throw new DataIntegrityFailureException("The event can only be rejected if it has not "
                             + "yet been published"); // Код 409
                 }
             }
@@ -340,7 +339,7 @@ public class EventService {
         if (event.getConfirmedRequests() < event.getParticipantLimit()) {
             eventRepository.incEventCountConfirmedRequests(id);
         } else {
-            throw new DataIntegrityViolationException("The event has reached its limit of participation requests. " +
+            throw new DataIntegrityFailureException("The event has reached its limit of participation requests. " +
                     "eventId=" + id + ", limit=" + event.getParticipantLimit());
         }
     }

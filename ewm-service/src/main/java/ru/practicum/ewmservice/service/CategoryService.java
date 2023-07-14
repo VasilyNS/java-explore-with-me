@@ -30,7 +30,6 @@ public class CategoryService {
 
     @Transactional
     public void delCategory(Long id) {
-        checkExistAndGetCategory(id);
         categoryRepository.deleteById(id);
     }
 

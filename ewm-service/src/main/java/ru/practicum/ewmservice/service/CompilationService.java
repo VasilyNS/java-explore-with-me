@@ -38,7 +38,6 @@ public class CompilationService {
      */
     @Transactional
     public void delCompilation(Long compId) {
-        checkExistAndGetCompilation(compId);
         compilationRepository.deleteById(compId);
     }
 

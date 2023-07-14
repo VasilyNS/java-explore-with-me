@@ -3,6 +3,7 @@ package ru.practicum.ewmservice.tools.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -71,6 +72,7 @@ public class ErrorHandler {
         return forAllErrorBadRequestCodes(e.getMessage());
     }
 
+    // Общий код для обработчиков всех ошибок с кодом 400
     private ResponseEntity forAllErrorBadRequestCodes(String errorMsg) {
         HttpStatus code = HttpStatus.BAD_REQUEST; // 400
         ApiError response = new ApiError(code, "Incorrectly made request.", errorMsg);
@@ -91,9 +93,31 @@ public class ErrorHandler {
         return ResponseEntity.status(code).body(response);
     }
 
+    // Ответ при исключении, что объект отсутствует при работе метода deleteById(id)
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity handleEmptyResultDataAccessException(EmptyResultDataAccessException e) {
+        String errorMsg = e.getMessage();
+        HttpStatus code = HttpStatus.NOT_FOUND; // 404
+        ApiError response = new ApiError(code, "The required object was not found.", errorMsg);
+
+        log.warn(errorMsg);
+        return ResponseEntity.status(code).body(response);
+    }
+
     // Ответ при нарушении уникального значения в поле таблицы (ошибка целостности данных)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        String errorMsg = e.getMessage();
+        HttpStatus code = HttpStatus.CONFLICT; // 409
+        ApiError response = new ApiError(code, "Integrity constraint has been violated.", errorMsg);
+
+        log.warn(errorMsg);
+        return ResponseEntity.status(code).body(response);
+    }
+
+    // Также ответ с кодом 409 при ошибке целостности данных, но для пользовательского исключения
+    @ExceptionHandler(DataIntegrityFailureException.class)
+    public ResponseEntity handleDataIntegrityFailureException(DataIntegrityFailureException e) {
         String errorMsg = e.getMessage();
         HttpStatus code = HttpStatus.CONFLICT; // 409
         ApiError response = new ApiError(code, "Integrity constraint has been violated.", errorMsg);
