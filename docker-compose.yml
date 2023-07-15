@@ -1,5 +1,46 @@
 version: '3.8'
 services:
+
+  # ОСНОВНОЙ СЕВИС: СЕРВЕР И БД ---------------------------------------------------------
+
+  ewm-service:
+    build: ewm-service
+    image: ewm-service-img
+    container_name: ewm-service-cont
+    ports:
+      - "8080:8080"
+    depends_on:
+      ewm-db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmdb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - STATSERVER_URL=http://stats-server:9090
+#      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
+
+  ewm-db:
+    image: postgres:14-alpine
+    container_name: ewm-db-cont
+    ports:
+      - "6540:5432"
+    # volumes (сохранение данных) не нужны на этом этапе
+    # volumes:
+    #   - /var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=ewmdb
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+#      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U root -d ewmdb'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # СТАТИСТИКА: СЕРВЕР И БД ---------------------------------------------------------
+
   stats-server:
     build: stats-server
     image: stats-server-img
@@ -9,8 +50,12 @@ services:
     depends_on:
       stats-db:
         condition: service_healthy
+    # Перекрываем настройки (spring.datasource.username итд)! КАПС И "_" ВМЕСТО "."
     environment:
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/statsdb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
 #      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
 
   stats-db:
@@ -18,46 +63,16 @@ services:
     container_name: stats-db-cont
     ports:
       - "6541:5432"
-    volumes:
-      - /var/lib/postgresql/data/
+    # volumes (сохранение данных) не нужны на этом этапе
+    #    volumes:
+    #      - /var/lib/postgresql/data/
     environment:
       - POSTGRES_DB=statsdb
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 #      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U root -d statsdb'"]
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U root -d statsdb'" ]
       interval: 5s
       timeout: 5s
       retries: 5
-
-  ewm-service:
-    build: ewm-service
-    image: ewm-service-img
-    container_name: ewm-service-cont
-    ports:
-      - "8080:8080"
-#    depends_on:
-#      ewm-db:
-#        condition: service_healthy
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmdb
-#      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
-
-#  ewm-db:
-#    image: postgres:14-alpine
-#    container_name: ewm-db
-#    ports:
-#      - "6541:5432"
-#    volumes:
-#      - /var/lib/postgresql/data/
-#    environment:
-#      - POSTGRES_DB=ewmdb
-#      - POSTGRES_USER=root
-#      - POSTGRES_PASSWORD=root
-#      - TZ=Asia/Krasnoyarsk #TODO: Закомментить таймзону перед отправкой на гитхаб
-#    healthcheck:
-#      test: ["CMD-SHELL", "sh -c 'pg_isready -U root -d ewmdb'"]
-#      interval: 5s
-#      timeout: 5s
-#      retries: 5
