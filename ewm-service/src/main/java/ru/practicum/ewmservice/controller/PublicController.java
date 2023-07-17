@@ -27,6 +27,7 @@ public class PublicController {
     private final CategoryService categoryService;
     private final EventService eventService;
     private final CompilationService compilationService;
+    private final PlaceLocationService placeLocationService;
     private final StatClient statClient;
 
     // Public: Категории - Публичный API для работы с категориями ------------------------------------------------------
@@ -71,6 +72,12 @@ public class PublicController {
     public List<EventFullDto> getSelectedEventsForPublic(@RequestParam(required = false) String text,
                                                          @RequestParam(required = false) List<Long> categories,
                                                          @RequestParam(required = false) Boolean paid,
+
+                                                         @RequestParam(required = false) Long locid,
+                                                         @RequestParam(required = false) Float lat,
+                                                         @RequestParam(required = false) Float lon,
+                                                         @RequestParam(required = false) Float radius,
+
                                                          @RequestParam(required = false) String rangeStart,
                                                          @RequestParam(required = false) String rangeEnd,
                                                          @RequestParam(defaultValue = "false") Boolean onlyAvailable,
@@ -83,6 +90,10 @@ public class PublicController {
                 .text(text)
                 .categories(categories)
                 .paid(paid)
+                .locid(locid)
+                .lat(lat)
+                .lon(lon)
+                .radius(radius)
                 .rangeStart(rangeStart)
                 .rangeEnd(rangeEnd)
                 .onlyAvailable(onlyAvailable)
@@ -143,6 +154,27 @@ public class PublicController {
     public CompilationDto getCompilationById(@PathVariable Long compId) {
         log.info("Begin of 'GET /compilations/{compId}' (Public API) Compilations by id, compId={}", compId);
         return compilationService.getCompilationById(compId);
+    }
+
+    // Public: Локации. Публичный API для работы с локациями -----------------------------------------------------------
+
+    /**
+     * Получение локации по id (Public API)
+     */
+    @GetMapping("/location/{locId}")
+    public PlaceLocationDto getLocationById(@PathVariable Long locId) {
+        log.info("Begin of 'GET /location/{locId}' (Public API) Location by id. locId={}", locId);
+        return placeLocationService.getLocationById(locId);
+    }
+
+    /**
+     * Получение списка всех локаций с пагинацией (Public API)
+     */
+    @GetMapping("/location")
+    public List<PlaceLocationDto> getAllLocations(@RequestParam(defaultValue = "0") Long from,
+                                                  @RequestParam(defaultValue = "10") Long size) {
+        log.info("Begin of 'GET /location' (Public API) all location");
+        return placeLocationService.getAllLocations(from, size);
     }
 
 

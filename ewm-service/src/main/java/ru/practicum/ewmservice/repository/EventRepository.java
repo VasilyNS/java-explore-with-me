@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import ru.practicum.ewmservice.enums.State;
 import ru.practicum.ewmservice.model.Event;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
@@ -21,5 +22,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "SET e.confirmedRequests = e.confirmedRequests + 1 " +
             "WHERE e.id = :id ")
     void incEventCountConfirmedRequests(Long id);
+
+    // Пример работы с distance через JPQL
+    @Query("SELECT e " +
+            "FROM Event e " +
+            "WHERE distance(e.lat, e.lon, :lat, :lon) <= :radius ")
+    List<Event> getEventsByLocation(Float lat, Float lon, Float radius);
 
 }

@@ -13,6 +13,12 @@ public class ParamsForSearch {
     private List<Long> users;
     private List<String> states;
     private List<Long> categories;
+
+    private Long locid;
+    private Float lat;
+    private Float lon;
+    private Float radius;
+
     private String rangeStart;
     private String rangeEnd;
     private Long from;

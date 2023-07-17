@@ -2,14 +2,16 @@ package ru.practicum.ewmservice.service;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.dto.*;
 import ru.practicum.ewmservice.enums.*;
-import ru.practicum.ewmservice.mapper.EventMapper;
+import ru.practicum.ewmservice.mapper.*;
 import ru.practicum.ewmservice.model.Event;
+import ru.practicum.ewmservice.model.PlaceLocation;
 import ru.practicum.ewmservice.model.QEvent;
 import ru.practicum.ewmservice.repository.EventRepository;
 import ru.practicum.ewmservice.tools.*;
@@ -31,6 +33,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
+    private final PlaceLocationService placeLocationService;
     @PersistenceContext
     private EntityManager entityManager; // Для QueryDSL
 
@@ -161,6 +164,7 @@ public class EventService {
     }
 
     /**
+     * 'GET /events' (Public API)
      * Метод длинный, в рабочем варианте можно сделать его рефакторинг не несколько методов.
      * Но в таком варианте он проще воспринимается для меня.
      */
@@ -174,6 +178,32 @@ public class EventService {
 
         // "Это публичный эндпоинт, соответственно в выдаче должны быть только опубликованные события"
         whereClause.and(qEvent.state.eq(State.PUBLISHED));
+
+        // Поиск по локации или координатам + радиусу
+        Float lat = 0f;
+        Float lon = 0f;
+        Float radius = 0f;
+        boolean geoSearch = false; // Флаг, что нужно добавить поиск по координатам
+        // Если задан id локации, то используем его для получения координат и радиуса
+        if (params.getLocid() != null) {
+            PlaceLocation pl = placeLocationService.checkExistAndGetPlaceLocation(params.getLocid());
+            lat = pl.getLat();
+            lon = pl.getLon();
+            radius = pl.getRadius();
+            geoSearch = true;
+        } else if (params.getLat() != null && params.getLon() != null && params.getRadius() != null) {
+            // Если id локации не задан, но вручную заданы обе координаты и радиус, то тоже ищем
+            // Эта фича удобна если человек устройство определило свои координаты
+            // то можно найти события в указанном радиусе
+            lat = params.getLat();
+            lon = params.getLon();
+            radius = params.getRadius();
+            geoSearch = true;
+        }
+        if (geoSearch) {
+            whereClause.and(Expressions.numberTemplate(Double.class, "distance({0}, {1}, {2}, {3})",
+                    qEvent.lat, qEvent.lon, lat, lon).loe(radius));
+        }
 
         // Текст (text) для поиска в содержимом аннотации (annotation) и подробном описании события (description)
         // текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв
