@@ -1,6 +1,7 @@
 package ru.practicum.ewmservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 /**
@@ -12,6 +13,7 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true) // Не читаем ненужные поля из JSON
 public class GeoNominatimDto {
 
-    private String display_name; // Название места, как возвращает в JSON сторонний сервис
+    @JsonProperty("display_name")
+    private String displayName; // Название места, как возвращает в JSON сторонний сервис
 
 }

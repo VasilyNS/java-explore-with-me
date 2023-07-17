@@ -50,7 +50,7 @@ public class GeoServiceNominatimImpl extends BaseClient implements GeoService {
                     new TypeReference<GeoNominatimDto>() {
                     }
             );
-            geoDto.setName(geoNominatimDto.getDisplay_name());
+            geoDto.setName(geoNominatimDto.getDisplayName());
             return geoDto;
         } else {
             log.warn("Error in server response: {}", response.getStatusCode());
