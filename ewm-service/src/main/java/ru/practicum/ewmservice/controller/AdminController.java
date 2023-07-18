@@ -28,6 +28,7 @@ public class AdminController {
     private final CategoryService categoryService;
     private final EventService eventService;
     private final CompilationService compilationService;
+    private final PlaceLocationService placeLocationService;
 
     // Admin: Пользователи. API для работы с пользователями ------------------------------------------------------------
 
@@ -45,8 +46,8 @@ public class AdminController {
      */
     @GetMapping("/users")
     public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
-                                  @RequestParam(defaultValue = "0") Long from,
-                                  @RequestParam(defaultValue = "10") Long size) {
+                                  @RequestParam(defaultValue = "0") int from,
+                                  @RequestParam(defaultValue = "10") int size) {
         log.info("Begin of 'GET /admin/users' Users getting, ids={}", ids);
         return userService.getUsers(ids, from, size);
     }
@@ -165,6 +166,39 @@ public class AdminController {
         log.info("Begin of 'PATCH /admin/compilations/{compId}' Compilation updating, compId={}, {}",
                 compId, updateCompilationRequest);
         return compilationService.updateCompilation(compId, updateCompilationRequest);
+    }
+
+    // Admin: Локации. API для работы с локациями ----------------------------------------------------
+
+    /**
+     * Добавление новой локации (Admin API)
+     */
+    @PostMapping("/location")
+    @ResponseStatus(HttpStatus.CREATED) // 201
+    public PlaceLocationDto saveLocation(@Valid @RequestBody NewPlaceLocationDto newPlaceLocationDto) {
+        log.info("Begin of 'POST /admin/location' Location creation for: {}", newPlaceLocationDto.toString());
+        return placeLocationService.saveLocation(newPlaceLocationDto);
+    }
+
+    /**
+     * Обновление информации о локации (Admin API)
+     */
+    @PatchMapping("/location/{locId}")
+    public PlaceLocationDto updateLocation(@PathVariable Long locId,
+                                           @Valid @RequestBody UpdatePlaceLocationDto updatePlaceLocationDto) {
+        log.info("Begin of 'PATCH /admin/location/{locId}' Location updating, locId={}, {}",
+                locId, updatePlaceLocationDto);
+        return placeLocationService.updateLocation(locId, updatePlaceLocationDto);
+    }
+
+    /**
+     * Удаление локации (Admin API)
+     */
+    @DeleteMapping("/location/{locId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT) // 204
+    public void delLocation(@PathVariable Long locId) {
+        log.info("Begin of 'DELETE /admin/location/{locId}' Location deleting, locId={}", locId);
+        placeLocationService.delLocation(locId);
     }
 
 }

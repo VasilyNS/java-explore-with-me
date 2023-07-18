@@ -26,6 +26,7 @@ public class PrivateController {
 
     private final EventService eventService;
     private final RequestService requestService;
+    private final GeoService geoService;
 
     /**
      * Добавление нового события
@@ -152,5 +153,22 @@ public class PrivateController {
         return requestService.updateRequestsStatus(userId, eventId, requestsStatus);
     }
 
+    // Private: Гео-сервис, для использования в закрытом API, чтобы давать имена и адреса по координатам ---------------
+
+    /**
+     * Получение названия и адреса места по координатам для использования во фронтэнде при создании новых
+     * локаций или событий. Автоматически названия подставлять нельзя, так как геосервисы могут ошибаться
+     * и нужно подтверждение человека.
+     * <p>
+     * Данный эндпоинт нельзя выносить в публичную часть, так как обращение к внешним сервисам может быть платное
+     * или с ограничением по количеству обращений
+     */
+    @GetMapping("/{userId}/geoservice")
+    public GeoDto getPlaceName(@PathVariable Long userId,
+                               @RequestParam Float lat,
+                               @RequestParam Float lon) {
+        log.info("Begin of '/{userId}/geoservice' all Events by userId={}, lat={}, lon={}", userId, lat, lon);
+        return geoService.getPlaceName(lat, lon);
+    }
 
 }

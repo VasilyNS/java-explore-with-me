@@ -58,8 +58,8 @@ public class CompilationService {
      * В случае, если по заданным фильтрам не найдено ни одной подборки, возвращает пустой список
      */
     @Transactional(readOnly = true)
-    public List<CompilationDto> getCompilations(Boolean pinned, Long from, Long size) {
-        int pageNum = (int) (from / size);
+    public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
+        int pageNum = from / size;
         Pageable pageable = PageRequest.of(pageNum, Math.toIntExact(size));
         List<Compilation> compilations;
         if (pinned == null) {
