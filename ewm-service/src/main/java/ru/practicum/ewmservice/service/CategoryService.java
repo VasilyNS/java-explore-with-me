@@ -49,8 +49,8 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryDto> getAllCategories(Long from, Long size) {
-        int pageNum = (int) (from / size);
+    public List<CategoryDto> getAllCategories(int from, int size) {
+        int pageNum = from / size;
         Pageable pageable = PageRequest.of(pageNum, Math.toIntExact(size));
         return categoryRepository.getAllCategories(pageable);
     }

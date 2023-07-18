@@ -64,8 +64,8 @@ public class PlaceLocationService {
      * Получение списка всех локаций с пагинацией (Public API)
      */
     @Transactional(readOnly = true)
-    public List<PlaceLocationDto> getAllLocations(Long from, Long size) {
-        int pageNum = (int) (from / size);
+    public List<PlaceLocationDto> getAllLocations(int from, int size) {
+        int pageNum = from / size;
         Pageable pageable = PageRequest.of(pageNum, Math.toIntExact(size));
         List<PlaceLocation> pl = placeLocationRepository.getAllLocations(pageable);
         return pl.stream().map(placeLocationMapper::toPlaceLocationDto)

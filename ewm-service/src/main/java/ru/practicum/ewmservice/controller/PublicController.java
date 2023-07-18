@@ -36,8 +36,8 @@ public class PublicController {
      * В случае, если по заданным фильтрам не найдено ни одной категории, возвращает пустой список
      */
     @GetMapping("/categories")
-    public List<CategoryDto> getAllCategories(@RequestParam(defaultValue = "0") Long from,
-                                              @RequestParam(defaultValue = "10") Long size) {
+    public List<CategoryDto> getAllCategories(@RequestParam(defaultValue = "0") int from,
+                                              @RequestParam(defaultValue = "10") int size) {
         log.info("Begin of 'GET /categories' All categories getting");
 
         return categoryService.getAllCategories(from, size);
@@ -140,8 +140,8 @@ public class PublicController {
      */
     @GetMapping("/compilations")
     public List<CompilationDto> getCompilations(@RequestParam(required = false) Boolean pinned,
-                                                @RequestParam(defaultValue = "0") Long from,
-                                                @RequestParam(defaultValue = "10") Long size) {
+                                                @RequestParam(defaultValue = "0") int from,
+                                                @RequestParam(defaultValue = "10") int size) {
         log.info("Begin of 'GET /compilations' (Public API) all compilations by params, pinned={}", pinned);
         return compilationService.getCompilations(pinned, from, size);
     }
@@ -171,8 +171,8 @@ public class PublicController {
      * Получение списка всех локаций с пагинацией (Public API)
      */
     @GetMapping("/location")
-    public List<PlaceLocationDto> getAllLocations(@RequestParam(defaultValue = "0") Long from,
-                                                  @RequestParam(defaultValue = "10") Long size) {
+    public List<PlaceLocationDto> getAllLocations(@RequestParam(defaultValue = "0") int from,
+                                                  @RequestParam(defaultValue = "10") int size) {
         log.info("Begin of 'GET /location' (Public API) all location");
         return placeLocationService.getAllLocations(from, size);
     }

@@ -29,9 +29,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserDto> getUsers(List<Long> ids, Long from, Long size) {
+    public List<UserDto> getUsers(List<Long> ids, int from, int size) {
         // Перевод порядкового номера элемента в номер страницы для Pageable
-        int pageNum = (int) (from / size);
+        int pageNum = from / size;
         Pageable pageable = PageRequest.of(pageNum, Math.toIntExact(size));
         if (ids == null) {
             return userRepository.findAllUsers(pageable);
